@@ -1,0 +1,23 @@
+# Environment
+.env
+.venv/
+*.egg-info/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# uv
+.uv/
+
+# Sessions and paper output - local only
+sessions/
+paper/
+
+# OS
+.DS_Store
+Thumbs.db
+EOF
