@@ -51,18 +51,29 @@ class Session:
         return self.round_limit
     
     def calculate_round_order(self, flag_tallies):
-        pass
+        order = []
+
+        flagged = sorted(
+            flag_tallies.keys(),
+            key=lambda v: (-flag_tallies[v], self.seat_order.index(v))
+        )
+    
+        if "THE_STEWARD" not in flagged:
+            flagged.append("THE_STEWARD")
+    
+        return flagged
     
     def run(self, question):
         pass
 
 if __name__ == "__main__":
     session = Session()
+    session.seat_order = VOICES.copy()
     
-    # test with override
-    test_with_override = "Opening entry content. ROUNDS: 5 More content."
-    print(session.parse_round_limit(test_with_override))
+    tallies = {
+        "THE_SCHOLAR": 3,
+        "THE_BUILDER": 1,
+        "THE_TRADER": 2
+    }
     
-    # test without override
-    test_without_override = "Opening entry content with no round declaration."
-    print(session.parse_round_limit(test_without_override))
+    print(session.calculate_round_order(tallies))
