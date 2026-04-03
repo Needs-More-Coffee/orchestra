@@ -17,4 +17,7 @@ class AnthropicProvider(Provider):
                 {"role": "user", "content": user_message}
             ]
         )
+        if not response.content or not response.content[0].text:
+            raise ValueError(f"Empty response received from API")
+        print(f"stop_reason: {response.stop_reason} | length: {len(response.content[0].text)}")
         return response.content[0].text

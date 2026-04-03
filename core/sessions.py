@@ -68,21 +68,19 @@ class Session:
             f"Position {i+1}: {voice}"
             for i, voice in enumerate(self.seat_order)
         ])
-
         self.paper.write_system(
             f"Session initialized.\n\n"
             f"SEAT ORDER:\n{seat_order_map}"
         )
-
         self.paper.write_system(f"USER: {question}")
 
+        # pre-deliberation
         steward_prompt = self.loader.load_voice("THE_STEWARD")
         steward_response = self.provider.send(
             steward_prompt,
             self.paper.as_string()
         )
         self.paper.write_voice("THE_STEWARD", steward_response)
-
         self.round_limit = self.parse_round_limit(steward_response)
         initial_flags = self.parse_flags(steward_response)
         if initial_flags:
@@ -90,43 +88,45 @@ class Session:
         else:
             round_order = self.seat_order.copy()
         self.paper.write_system(f"Round 1 order: {round_order}")
-    
-        print("Pre-deliberation complete.")
-        print(f"Round limit: {self.round_limit}")
-        print(f"Round 1 order: {round_order}")
-        print(self.paper.as_string())
 
-        for round_num in range(self.round_limit):
-            self.paper.write_system(f"Round {round_num + 1} open")
+        # round execution
+        current_round = 0
+
+        while current_round < self.round_limit:
+            self.paper.write_system(f"Round {current_round + 1} open")
             flag_tallies = {}
             early_exit = False
-    
+
             for voice in round_order:
-        
+                # TODO: check for Vio2 and Halt tags here
                 voice_prompt = self.loader.load_voice(voice)
                 response = self.provider.send(
                     voice_prompt,
                     self.paper.as_string()
                 )
                 self.paper.write_voice(voice, response)
-        
+
                 flags = self.parse_flags(response)
                 for v, count in flags.items():
                     flag_tallies[v] = flag_tallies.get(v, 0) + count
-        
+
                 if voice == "THE_STEWARD":
                     if "SESSION: COMPLETE" in response:
                         early_exit = True
                         break
-    
+
             if early_exit:
                 break
-    
-            round_order = self.calculate_round_order(flag_tallies)
-            self.paper.write_system(
-                f"Round {round_num + 2} order: {round_order}"
-            )
 
+            current_round += 1
+
+            if current_round < self.round_limit:
+                round_order = self.calculate_round_order(flag_tallies)
+                self.paper.write_system(
+                    f"Round {current_round + 1} order: {round_order}"
+                )
+
+        # session close
         self.paper.write_system("Session end")
 
         scholar_prompt = self.loader.load_voice("THE_SCHOLAR")
@@ -137,7 +137,6 @@ class Session:
         Every concept must have a transcript anchor.
         Nothing else.
         """
-
         concept_key = self.provider.send(
             scholar_prompt + concept_key_instruction,
             self.paper.as_string()
