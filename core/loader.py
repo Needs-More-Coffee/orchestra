@@ -39,7 +39,3 @@ class Loader:
             for template in VOICE_TEMPLATES[voice_name]:
                 prompt += self.load_file(template)
         return prompt
-
-if __name__ == "__main__":
-    loader = Loader("ai_council")
-    print(loader.load_voice("THE_STEWARD"))
