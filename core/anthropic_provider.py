@@ -1,5 +1,8 @@
 from anthropic import Anthropic
 from core.provider import Provider
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class AnthropicProvider(Provider):
     def __init__(self):

@@ -32,15 +32,13 @@ class Session:
         flag_tallies = {}
         pattern = r'\(([X_]{7})\)'
         matches = re.findall(pattern, voice_output)
-        print(f"matches: {matches}")
-        print(f"seat_order: {self.seat_order}")
-
+    
         for match in matches:
             for position, char in enumerate(match):
                 if char == 'X':
                     voice = self.seat_order[position]
                     flag_tallies[voice] = flag_tallies.get(voice, 0) + 1
-        
+    
         return flag_tallies
     
     def parse_round_limit(self, steward_output):
@@ -64,16 +62,26 @@ class Session:
         return flagged
     
     def run(self, question):
-        pass
+        self.generate_seat_order()
+        self.paper.write_system(
+            f"Session initialized. Seat order: {self.seat_order}"
+        )
 
-if __name__ == "__main__":
-    session = Session()
-    session.seat_order = VOICES.copy()
+        self.paper.write_system(f"USER: {question}")
+
+        steward_prompt = self.loader.load_voice("THE_STEWARD")
+        steward_response = self.provider.send(
+            steward_prompt,
+            self.paper.as_string()
+        )
+        self.paper.write_voice("THE_STEWARD", steward_response)
+
+        self.round_limit = self.parse_round_limit(steward_response)
+        initial_flags = self.parse_flags(steward_response)
+        round_order = self.calculate_round_order(initial_flags)
+        self.paper.write_system(f"Round 1 order: {round_order}")
     
-    tallies = {
-        "THE_SCHOLAR": 3,
-        "THE_BUILDER": 1,
-        "THE_TRADER": 2
-    }
-    
-    print(session.calculate_round_order(tallies))
+        print("Pre-deliberation complete.")
+        print(f"Round limit: {self.round_limit}")
+        print(f"Round 1 order: {round_order}")
+        print(self.paper.as_string())
