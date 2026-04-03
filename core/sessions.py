@@ -115,7 +115,7 @@ class Session:
                     flag_tallies[v] = flag_tallies.get(v, 0) + count
         
                 if voice == "THE_STEWARD":
-                    if "COMPLETE" in response.upper():
+                    if "SESSION: COMPLETE" in response:
                         early_exit = True
                         break
     
