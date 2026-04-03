@@ -1,3 +1,5 @@
+import os
+
 class Paper:
     def __init__(self):
         self.entries = []
@@ -21,3 +23,8 @@ class Paper:
             result += f"{entry['content']}\n"
             result += "---\n"
         return result
+    
+    def save(self, filepath):
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, 'w') as f:
+            f.write(self.as_string())

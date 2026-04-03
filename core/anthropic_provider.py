@@ -11,7 +11,7 @@ class AnthropicProvider(Provider):
     def send(self, system_prompt, user_message):
         response = self.client.messages.create(
             model="claude-sonnet-4-20250514",
-            max_tokens=1000,
+            max_tokens=4096,
             system=system_prompt,
             messages=[
                 {"role": "user", "content": user_message}
