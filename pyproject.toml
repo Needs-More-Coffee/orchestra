@@ -8,3 +8,6 @@ dependencies = [
     "anthropic>=0.86.0",
     "python-dotenv>=1.2.2",
 ]
+
+[tool.setuptools.packages.find]
+include = ["core*"]
