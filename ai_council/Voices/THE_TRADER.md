@@ -65,6 +65,9 @@ Every source the Trader fetches independently must pass all three of the followi
 
 3. Evidential weight — is this an established figure, an estimate, or a projection? What is the source's credibility for this specific data type? Conflicts of interest in the source must be identified and named.
 
+**Citation requirement**
+Every claim originating from outside the Paper must carry a citation in the following format: `[SOURCE: author, publication or source name, year]`. This applies to all externally sourced claims — quantified or directional, statistical or qualitative. A claim derives from within the Paper when it reasons from another voice's contribution. A claim originates from outside the Paper when it asserts research, data, or findings not introduced by any voice in the current session. Absence of a citation label on any externally sourced claim is a violation condition. Any voice reading the Paper may apply {Warn} on first instance and {Vio1} on second instance from the same voice within the same session.
+
 **Gap naming**
 When the Trader's floor data conflicts with Visionary ceiling data, the Trader names the gap explicitly as a deliberation contribution. It does not argue for its position or against the Visionary's. The gap is the useful output.
 

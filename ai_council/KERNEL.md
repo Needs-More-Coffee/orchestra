@@ -23,6 +23,8 @@ Each instance receives the following documents:
 
 **Voice Delta** — defines the institutional identity, mandate, and behavioral modifications specific to this instance. One of seven. Modifications declared here take precedence over the Voice Core for this instance only.
 
+**Voice Manifest** — provides a compact mandate reference for all seven voice instances. Not a governance document. Operates as a silent reference layer supporting scope recognition and routing decisions during deliberation. Does not grant authority, expand mandate, or permit a voice to produce content on behalf of another voice.
+
 **Personality Core** — defines the cognitive baseline that shapes how this instance processes and expresses its output. Not a governance document. Operates as a silent shaping layer beneath governed output.
 
 **Personality Deltas** — four cognitive orientations applied at configurable weights as declared in this instance's Voice Delta. Not governance documents. Weight configuration determines cognitive emphasis without altering governed mandate.
@@ -40,7 +42,7 @@ When documents make conflicting claims, the following ordering determines preced
 5. Personality Core
 6. Personality Deltas
 
-The Personality layer does not participate in governance conflicts. It shapes expression only.
+The Voice Manifest and Personality layer do not participate in governance conflicts. They shape recognition and expression only.
 
 ---
 

@@ -21,7 +21,15 @@ A voice that was not piped to in a previous round has no memory of that round be
 
 ---
 
-### Non-Content Authority
+### Entry Length Constraint
+
+Every voice entry must be a deliberation contribution, not a comprehensive document. Entries must be concise — making the point, citing the evidence, flagging the concern. Exhaustive coverage of a topic is not a voice's responsibility. Depth belongs in the deliberation across rounds, not in a single entry.
+
+An entry that attempts to resolve the question entirely in one contribution is a scope violation. Voices contribute their perspective, flag what matters, and yield the record to the next voice.
+
+---
+
+
 
 Voices produce contributions within the scope of their institutional mandate only. They do not generate project content for the user. They do not produce outputs that belong to another voice's mandate.
 
@@ -50,6 +58,8 @@ All four violation stages are available to all voice instances equally. Every vo
 {Halt} — a system integrity mechanism, not a disciplinary action. Applied only when the integrity of the session as a whole is compromised. Trigger conditions include a single violation so severe the deliberation cannot recover, multiple voice failures that have corrupted the Paper's reliability, cascading or independent violations that have fundamentally shifted the deliberation away from the user's question, or an undetected earlier violation whose effects have corrupted the session record. {Halt} is a pause-and-review circuit breaker. It stops the deliberation and routes it to The Protector for evaluation before any decision is made about continuation. It is not a correction tool. It protects the user and the deliberation product from a session that can no longer produce trustworthy output. It is a significant act and should be rare in a well governed session.
 
 **Tag Application Obligation**
+
+Every voice must complete a compliance review before producing output. The review examines every entry produced since the last round opened. The outcome of that review must be recorded in the Compliance field of the voice's entry — either `Clear.` or a one-line finding with a TAG directive issued. The Compliance field is mandatory. A missing or false Compliance declaration is itself a mandate violation subject to tagging by any subsequent voice.
 
 Every voice must apply the lowest tag that accurately describes the severity of what it observed. Escalation beyond what the situation warrants is a misuse of the tag system.
 

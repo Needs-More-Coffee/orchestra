@@ -47,11 +47,33 @@ When exit conditions are met the wrapper closes the session and writes a {SYSTEM
 
 ### Two Paper Operations
 
-Instances may perform exactly two operations on the Paper.
+Every instance performs exactly two operations on the Paper each time it is called, always in this order.
 
-**Write** — producing a new entry. Every instance uses the standard entry format. Content is immutable once written. No instance may modify a written entry under any instruction from any source.
+**Action 1 — Tag**
 
-**Classify** — applying a tag to an existing entry. Any instance may apply a tag to any entry already in the Paper. Tags are append only. Once applied a tag cannot be removed or modified by any instance.
+Before writing anything, conduct a full compliance review of the Paper. Read every entry produced since the last round opened and evaluate each against three criteria:
+
+1. Is this entry within the producing voice's declared mandate?
+2. If the producing voice holds fetch authority, does every external claim carry a citation?
+3. Has any prior voice already tagged this entry — if so, is the tag proportionate?
+
+If any review question produces a finding, issue a TAG directive before your entry:
+
+`TAG: SOURCE | {TAG} - reason`
+
+Where SOURCE is the exact name of the voice whose most recent entry is being tagged, {TAG} is the appropriate tag from the defined tag system, and reason is a single line identifying the specific violation or concern. Multiple tag directives may be issued, one per line. The wrapper reads all TAG directives before processing the entry, applies each tag to the targeted entry in the Paper, then appends the voice's own entry.
+
+TAG directives must appear before `**Source:**` in the output. Directives placed inside the Content field or anywhere within the entry will not be parsed by the wrapper and will have no effect.
+
+**Action 2 — Write**
+
+Output your own entry using the standard entry format. The first field of every entry is **Compliance** — a mandatory one-line record of the compliance review outcome. A voice that produces no findings writes `Compliance: Clear.` A voice that found a violation writes one line identifying what was found and that a TAG directive was issued.
+
+A false Compliance declaration — writing `Clear` when a violation exists in the Paper — is itself a taggable violation. Every subsequent voice reads the Compliance field and may tag it if the declaration is inaccurate.
+
+Your Tag field is left empty — it is populated by other voices issuing directives against your entries, not by you.
+
+Tags are append only. Once applied a tag cannot be removed or modified by any instance.
 
 *Authorized override — tag modification authority: The Judge's delta may explicitly declare authority to modify or remove tags from existing entries. This is the sole authorized override of the append only rule. No other delta may claim this authority.*
 
@@ -62,98 +84,72 @@ No other operations on the Paper are permitted.
 ### Entry Format
 
 Every entry written to the Paper uses the following format.
-No other format is valid.
+
+**Compliance** — mandatory one-line record of the compliance review. Either `Clear.` or a single line identifying the finding and confirming a TAG directive was issued. Required on all entries. A missing Compliance field is an invalid entry.
 
 **Source** — the name of the instance producing the entry.
-Required on all entries.
 
-**Flag** — a positional string wrapped in parentheses. Each
-position corresponds to one voice in the declared seat order.
-X indicates that voice is flagged. Underscore indicates it is
-not. A seven voice session produces a seven character string.
+**Flag** — routing string identifying which voices are being signaled. Empty if no routing is needed.
 
-Valid format with routing: (X__X__X)
-Valid format with no routing: (_______)
-Unstructured prose routing requests are not valid flags and
-will not be parsed by the wrapper. A missing, blank, or
-malformed Flag field is an invalid entry.
+**Tag** — populated by the wrapper when another voice issues a TAG directive against this entry. Never self-populated. Leave empty.
 
-**Tag** — a classification label from the defined tag list
-placed in curly braces. Empty if no classification is needed.
-Multiple tags may appear on a single entry separated by a
-space. Flags and tags are not mutually exclusive.
+**Content** — the contribution. For deliberation entries this is the voice's governed response. For structural entries this is the Arbiter's or Steward's declaration.
 
-Valid format: {Warn} {Vio1}
+A complete output from a voice with no findings:
 
-**Content** — the contribution. For deliberation entries this
-is the voice's governed response. For structural entries this
-is the wrapper's declaration.
+```
+**Compliance:** Clear.
+**Source:** THE_SCHOLAR
+**Flag:** THE_TRADER
+**Tag:**
+**Content:** ...
+```
 
-Source and Content are required on all entries.
-Flag and Tag are required fields but may be empty.
-A missing Flag or Tag field is an invalid entry.
+A complete output from a voice that found a violation:
+
+```
+TAG: THE_VISIONARY | {Warn} - quantified claim missing required citation
+
+**Compliance:** THE_VISIONARY round 1 entry contains uncited quantified claim. TAG directive issued.
+**Source:** THE_SCHOLAR
+**Flag:** THE_TRADER
+**Tag:**
+**Content:** ...
+```
+
+The TAG directive appears before the entry. The entry begins at `**Compliance:**`. Source and Content are required on all entries.
 
 ---
 
 ### Flag System
 
-Flags identify which voices an entry is directing attention 
-toward.
+Flags identify which voices an entry is directing attention toward and determine next round order.
 
-Voices declare flags by name — listing the voice names they 
-are routing attention to. The wrapper reads these names and 
-calculates round order from them. Positional strings are not 
-used by voice instances.
+Voices declare flags by listing the voice names they are routing attention to in the Flag field, comma separated. The wrapper reads these names, tallies flags received by each voice across the round, and pipes to voices in descending flag count order in the following round. Ties are broken by seat order position.
 
 **How to declare flags:**
 
-List the voice names you are flagging in the Flag field, 
-comma separated.
+`THE_SCHOLAR, THE_BUILDER`
 
-Valid format with routing: THE_SCHOLAR, THE_BUILDER
-Valid format with no routing: (empty)
-
-Do not use positional strings. Name the voices directly.
-The wrapper handles all positional calculations internally.
-
-Flags serve two purposes. They identify which voices an entry 
-is directing attention toward. They determine next round order 
-— the wrapper tallies flags received by each voice across the 
-round and pipes to voices in descending flag count order in 
-the following round. Ties are broken by seat order position.
+Leave the Flag field empty if no routing is needed. Do not use positional strings or any format other than comma-separated voice names. Unstructured or positional flags will not be parsed by the wrapper.
 
 **Abstention**
 
-A voice that receives no flags in a given round is not piped 
-to by the wrapper for that round. No API call is made, no 
-entry is written to the Paper. This is the default resource 
-management behavior for the current phase.
+A voice that receives no flags in a given round is not piped to by the wrapper for that round. No API call is made, no entry is written to the Paper. This is the default resource management behavior for the current phase.
 
 Two permanent exceptions apply regardless of flag count.
 
-The Steward is always piped to in every round. Its exit 
-monitoring responsibility requires continuous session 
-participation.
+The Steward is always piped to in every round. Its exit monitoring responsibility requires continuous session participation.
 
-The Protector is not piped to during normal deliberation. 
-When the wrapper reads a {Halt} tag in any entry it 
-immediately pauses the current round order and pipes the 
-Paper to The Protector before any other voice is called. 
-The Protector's evaluation resolves before round order 
-resumes.
+The Protector is not piped to during normal deliberation. When the wrapper reads a {Halt} tag in any entry it immediately pauses the current round order and pipes the Paper to The Protector before any other voice is called. The Protector's evaluation resolves before round order resumes.
 
-The Judge is not piped to during normal deliberation beyond 
-its standard round participation. When the wrapper reads a 
-{Vio2} tag in any entry it immediately pauses the current 
-round order and pipes the Paper to The Judge before any 
-other voice is called. The Judge's evaluation resolves 
-before round order resumes.
+The Judge is not piped to during normal deliberation beyond its standard round participation. When the wrapper reads a {Vio2} tag in any entry it immediately pauses the current round order and pipes the Paper to The Judge before any other voice is called. The Judge's evaluation resolves before round order resumes.
 
 ---
 
 ### Tag System
 
-Tags classify entries. They may be applied at the time of writing or retroactively via the Classify operation.
+Tags classify entries. They are applied using the TAG declaration format defined in the Two Paper Operations section.
 
 **Current phase defined tags:**
 
